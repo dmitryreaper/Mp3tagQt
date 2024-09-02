@@ -83,10 +83,10 @@
               <bool>true</bool>
              </property>
              <property name="text">
-              <string>专辑图片</string>
+              <string>Pictures</string>
              </property>
              <property name="alignment">
-              <set>Qt::AlignCenter</set>
+              <set>Qt::AlignmentFlag::AlignCenter</set>
              </property>
             </widget>
            </item>
@@ -98,7 +98,7 @@
          <item>
           <spacer name="verticalSpacer">
            <property name="orientation">
-            <enum>Qt::Vertical</enum>
+            <enum>Qt::Orientation::Vertical</enum>
            </property>
            <property name="sizeHint" stdset="0">
             <size>
@@ -159,25 +159,25 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>文件</string>
+     <string>File</string>
     </property>
     <addaction name="action_open"/>
     <addaction name="action_quit"/>
    </widget>
    <widget class="QMenu" name="menu_2">
     <property name="title">
-     <string>帮助</string>
+     <string>About</string>
     </property>
     <addaction name="action_about"/>
    </widget>
    <widget class="QMenu" name="menu_3">
     <property name="title">
-     <string>工具</string>
+     <string>Export</string>
     </property>
     <widget class="QMenu" name="menu_codecs">
      <property name="title">

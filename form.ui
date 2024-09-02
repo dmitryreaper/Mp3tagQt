@@ -69,7 +69,7 @@
         </size>
        </property>
        <property name="placeholderText">
-        <string>过滤</string>
+        <string>edit</string>
        </property>
       </widget>
      </item>

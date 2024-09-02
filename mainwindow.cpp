@@ -27,7 +27,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     lineEdit_filter = new QLineEdit;
     lineEdit_filter->setFixedWidth(70);
-    lineEdit_filter->setPlaceholderText("过滤");
+    lineEdit_filter->setPlaceholderText("filter");
     connect(lineEdit_filter,SIGNAL(textChanged(QString)),this,SLOT(filter(QString)));
     ui->toolBar->addWidget(lineEdit_filter);
 
@@ -35,7 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
     filter("");
     TC = QTextCodec::codecForLocale();
     comboBox->setCurrentIndex(comboBox->findText(TC->name()));
-    ui->statusBar->showMessage("共 "+ QString::number(listCodecs.size()) + " 种编码，系统编码 " + TC->name());
+    ui->statusBar->showMessage("together "+ QString::number(listCodecs.size()) + "Kind of coding, system coding" + TC->name());
 
 }
 
@@ -47,9 +47,9 @@ MainWindow::~MainWindow()
 void MainWindow::on_action_open_triggered()
 {
     if (path == "") {
-        path = QFileDialog::getOpenFileName(this, "打开文本", ".", "*.mp3");
+        path = QFileDialog::getOpenFileName(this, "Open", ".", "*.mp3");
     } else {
-        path = QFileDialog::getOpenFileName(this, "打开文本", path, "*.mp3");
+        path = QFileDialog::getOpenFileName(this, "Open", path, "*.mp3");
     }
     if (!path.isEmpty()) {
         open(path);
@@ -64,7 +64,6 @@ void MainWindow::open(QString filename)
     setWindowTitle("MP3Tag - " + QFileInfo(filename).fileName());
     ui->textBrowser->setText("");
 
-    // 清空布局
     QLayoutItem *layoutItem;
     while ((layoutItem = ui->verticalLayout2->takeAt(0)) != 0 ) {
         delete layoutItem->widget();
@@ -84,11 +83,11 @@ void MainWindow::open(QString filename)
     if (ID3 == "ID3") {
         ui->textBrowser->append("ID3V2");
         Ver = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("版本号：" + Ver);
+        ui->textBrowser->append("Version" + Ver);
         Revision = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("副版本号：" + Revision);
+        ui->textBrowser->append("Revision" + Revision);
         Flag = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("Flag：" + Flag);
+        ui->textBrowser->append("Flag" + Flag);
         //size = file.read(4).toHex().toLongLong(&ok,16);
 //        QByteArray a = file.read(1);
 //        QByteArray b = file.read(1);
@@ -97,7 +96,7 @@ void MainWindow::open(QString filename)
 //        qDebug() << a << b << c << d;
         size = (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 21 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 14 | (file.read(1).toHex().toInt(&ok,16) & 0xEF) << 7 | file.read(1).toHex().toInt(&ok,16) & 0xEF;        
         qDebug() << "ID3V2 Size:" << size;
-        ui->textBrowser->append("大小：" + QString::number(size));
+        ui->textBrowser->append("Size" + QString::number(size));
         while (file.pos() < size) {
             QString FTag(file.read(4));
             qint64 FSize = file.read(4).toHex().toLongLong(&ok,16);
@@ -185,7 +184,7 @@ void MainWindow::open(QString filename)
             }
         }
     } else {
-        ui->textBrowser->append("没有ID3V2");
+        ui->textBrowser->append("ID3V2");
     }
     ui->textBrowser->append("----------------------------------------");
     pos = file.size()-128;
@@ -215,13 +214,13 @@ void MainWindow::open(QString filename)
         BA = file.read(30);
         qDebug() << "Artist" << BA.toHex().toUpper();
         Artist = TC->toUnicode(BA);
-        ui->textBrowser->append("歌手：" + Artist);
+        ui->textBrowser->append("Artist" + Artist);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("歌手：");
+        form->ui->label_tag->setText("Artist");
         form->ui->lineEdit_content->setText(Artist);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -230,13 +229,13 @@ void MainWindow::open(QString filename)
         BA = file.read(30);
         qDebug() << "Album" << BA.toHex().toUpper();
         Album = TC->toUnicode(BA);
-        ui->textBrowser->append("专辑：" + Album);
+        ui->textBrowser->append("Album" + Album);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("专辑：");
+        form->ui->label_tag->setText("Album");
         form->ui->lineEdit_content->setText(Album);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -245,13 +244,13 @@ void MainWindow::open(QString filename)
         BA = file.read(4);
         qDebug() << "Year" << BA.toHex().toUpper();
         Year = QString(BA);
-        ui->textBrowser->append("年份：" + Year);
+        ui->textBrowser->append("Year" + Year);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("年份：");
+        form->ui->label_tag->setText("Year");
         form->ui->lineEdit_content->setText(Year);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -260,13 +259,13 @@ void MainWindow::open(QString filename)
         BA = file.read(28);
         qDebug() << "Comment" << BA.toHex().toUpper();
         Comment = TC->toUnicode(BA);
-        ui->textBrowser->append("备注：" + Comment);
+        ui->textBrowser->append("Comment" + Comment);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("备注：");
+        form->ui->label_tag->setText("Comment");
         form->ui->lineEdit_content->setText(Comment);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -275,13 +274,13 @@ void MainWindow::open(QString filename)
         BA = file.read(1);
         qDebug() << "Reserved" << BA.toHex().toUpper();
         Reserved = QString(BA);
-        ui->textBrowser->append("保留：" + Reserved);
+        ui->textBrowser->append("Reserved" + Reserved);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("保留：");
+        form->ui->label_tag->setText("Reserved");
         form->ui->lineEdit_content->setText(Reserved);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -290,13 +289,13 @@ void MainWindow::open(QString filename)
         BA = file.read(1);
         qDebug() << "Track" << BA.toHex().toUpper();
         Track = QString(BA);
-        ui->textBrowser->append("音轨：" + Track);
+        ui->textBrowser->append("Track" + Track);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("音轨：");
+        form->ui->label_tag->setText("Track");
         form->ui->lineEdit_content->setText(Track);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
@@ -304,20 +303,20 @@ void MainWindow::open(QString filename)
         BA = file.read(1);
         qDebug() << "Genre" << BA.toHex().toUpper();
         Genre = QString::number(BA.toInt());
-        ui->textBrowser->append("种类：" + Genre);
+        ui->textBrowser->append("Genre" + Genre);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("种类：");
+        form->ui->label_tag->setText("Genre");
         form->ui->lineEdit_content->setText(Genre);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
 
         ui->verticalLayout1->addStretch();
     } else {
-        ui->textBrowser->append("没有ID3V1");
+        ui->textBrowser->append("ID3V1");
     }
     file.close();
     ui->textBrowser->moveCursor(QTextCursor::Start);
@@ -325,7 +324,7 @@ void MainWindow::open(QString filename)
 
 void MainWindow::on_action_about_triggered()
 {
-    QMessageBox aboutMB(QMessageBox::NoIcon, "关于", "海天鹰 MP3 ID3 信息查看器 1.0\n\n一款基于 Qt 的 MP3 ID3 信息查看程序。\n作者：黄颖\nE-mail: sonichy@163.com\n主页：https://github.com/sonichy");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "mp3tageditor", "MP3 ID3 1.0\n\n Qt  MP3 ID3 \n\nE-mail: dimadimof81@gmail.com\n https://github.com/dmitryreaper");
     aboutMB.setIconPixmap(QPixmap(":/icon.svg"));
     aboutMB.setWindowIcon(QIcon(":/icon.svg"));
     aboutMB.exec();
@@ -363,10 +362,10 @@ void MainWindow::changeCodec(QString codec)
     if(path!=""){
         TC = QTextCodec::codecForName(codec.toLatin1());
         if(TC){
-            ui->statusBar->showMessage("以 " + TC->name() + " 解码");
+            ui->statusBar->showMessage("to " + TC->name() + " decrypt ");
             open(path);
         }else{
-            ui->statusBar->showMessage(codec + " 编码没找到");
+            ui->statusBar->showMessage(codec + " Code not found ");
         }
     }
 }
@@ -378,5 +377,5 @@ void MainWindow::filter(QString s)
         if(listCodecs.at(i).contains(s.toLatin1()))
             comboBox->addItem(listCodecs.at(i));
     }
-    ui->statusBar->showMessage("过滤出 " + QString::number(comboBox->count()) + " 种编码");
+    ui->statusBar->showMessage("Filter out" + QString::number(comboBox->count()) + "Kind of code");
 }
