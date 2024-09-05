@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QDebug>
 #include <QTextCodec>
+
 #include <QMessageBox>
 #include <QMimeData>
 
@@ -35,7 +36,7 @@ MainWindow::MainWindow(QWidget *parent) :
     filter("");
     TC = QTextCodec::codecForLocale();
     comboBox->setCurrentIndex(comboBox->findText(TC->name()));
-    ui->statusBar->showMessage("together "+ QString::number(listCodecs.size()) + "Kind of coding, system coding" + TC->name());
+    ui->statusBar->showMessage("together "+ QString::number(listCodecs.size()) + " Kind of coding, system coding " + TC->name());
 
 }
 
@@ -81,14 +82,15 @@ void MainWindow::open(QString filename)
     qint64 pos,size;
     ID3 = QString(file.read(3));
     if (ID3 == "ID3") {
-        ui->textBrowser->append("ID3V2");
+        ui->textBrowser->append("ID3V2 ");
         Ver = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("Version" + Ver);
+        ui->textBrowser->append("Version " + Ver);
         Revision = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("Revision" + Revision);
+        ui->textBrowser->append("Revision " + Revision);
         Flag = QString::number(file.read(1).toHex().toInt(&ok,16));
-        ui->textBrowser->append("Flag" + Flag);
-        //size = file.read(4).toHex().toLongLong(&ok,16);
+        ui->textBrowser->append("Flag " + Flag);
+        //
+//        size = file.read(4).toHex().toLongLong(&ok,16);
 //        QByteArray a = file.read(1);
 //        QByteArray b = file.read(1);
 //        QByteArray c = file.read(1);
@@ -128,8 +130,8 @@ void MainWindow::open(QString filename)
                     ui->verticalLayout2->addWidget(form);
                 }else{
                     qDebug() << FTag << FSize << BA.mid(1,FSize-2);
-                    //ui->textBrowser->append(FTag + ": " + BA.mid(1,FSize-2));
-                    ui->textBrowser->append(FTag + ": " + TC->toUnicode(BA));
+                    ui->textBrowser->append(FTag + ": " + BA.mid(1,FSize-2));
+                    //ui->textBrowser->append(FTag + ": " + TC->toUnicode(BA));
                 }
             } else if (FTag == "COMM") {
                 QString language = BA.mid(1,3);
@@ -197,22 +199,22 @@ void MainWindow::open(QString filename)
         QByteArray BA;
         ui->textBrowser->append("ID3V1");
         BA = file.read(30);
-        qDebug() << "Title" << BA.toHex().toUpper();
+        qDebug() << "Title " << BA.toHex().toUpper();
         Title = TC->toUnicode(BA);
-        ui->textBrowser->append("标题：" + Title);
+        ui->textBrowser->append("Title " + Title);
         Form *form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("标题：");
+        form->ui->label_tag->setText("Set Title ");
         form->ui->lineEdit_content->setText(Title);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(30);
-        qDebug() << "Artist" << BA.toHex().toUpper();
+        qDebug() << "Artist " << BA.toHex().toUpper();
         Artist = TC->toUnicode(BA);
         ui->textBrowser->append("Artist" + Artist);
         form = new Form;
@@ -220,31 +222,31 @@ void MainWindow::open(QString filename)
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("Artist");
+        form->ui->label_tag->setText("Artist ");
         form->ui->lineEdit_content->setText(Artist);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(30);
-        qDebug() << "Album" << BA.toHex().toUpper();
+        qDebug() << "Album " << BA.toHex().toUpper();
         Album = TC->toUnicode(BA);
-        ui->textBrowser->append("Album" + Album);
+        ui->textBrowser->append("Album " + Album);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("Album");
+        form->ui->label_tag->setText("Album ");
         form->ui->lineEdit_content->setText(Album);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(4);
-        qDebug() << "Year" << BA.toHex().toUpper();
+        qDebug() << "Year " << BA.toHex().toUpper();
         Year = QString(BA);
-        ui->textBrowser->append("Year" + Year);
+        ui->textBrowser->append("Year " + Year);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
@@ -257,15 +259,15 @@ void MainWindow::open(QString filename)
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(28);
-        qDebug() << "Comment" << BA.toHex().toUpper();
+        qDebug() << "Comment " << BA.toHex().toUpper();
         Comment = TC->toUnicode(BA);
-        ui->textBrowser->append("Comment" + Comment);
+        ui->textBrowser->append("Comment " + Comment);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("Comment");
+        form->ui->label_tag->setText("Comment ");
         form->ui->lineEdit_content->setText(Comment);
         form->ui->lineEdit_content->setCursorPosition(0);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
@@ -287,29 +289,29 @@ void MainWindow::open(QString filename)
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(1);
-        qDebug() << "Track" << BA.toHex().toUpper();
+        qDebug() << "Track " << BA.toHex().toUpper();
         Track = QString(BA);
-        ui->textBrowser->append("Track" + Track);
+        ui->textBrowser->append("Track " + Track);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("Track");
+        form->ui->label_tag->setText("Track ");
         form->ui->lineEdit_content->setText(Track);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
 
         BA = file.read(1);
-        qDebug() << "Genre" << BA.toHex().toUpper();
+        qDebug() << "Genre " << BA.toHex().toUpper();
         Genre = QString::number(BA.toInt());
-        ui->textBrowser->append("Genre" + Genre);
+        ui->textBrowser->append("Genre " + Genre);
         form = new Form;
         form->listCodecs = listCodecs;
         form->filter("");
         form->ui->lineEdit_filter->setText(lineEdit_filter->text());
         form->BA = BA;
-        form->ui->label_tag->setText("Genre");
+        form->ui->label_tag->setText("Genre ");
         form->ui->lineEdit_content->setText(Genre);
         form->ui->comboBox->setCurrentIndex(form->ui->comboBox->findText(comboBox->currentText()));
         ui->verticalLayout1->addWidget(form);
@@ -324,7 +326,7 @@ void MainWindow::open(QString filename)
 
 void MainWindow::on_action_about_triggered()
 {
-    QMessageBox aboutMB(QMessageBox::NoIcon, "mp3tageditor", "MP3 ID3 1.0\n\n Qt  MP3 ID3 \n\nE-mail: dimadimof81@gmail.com\n https://github.com/dmitryreaper");
+    QMessageBox aboutMB(QMessageBox::NoIcon, "mp3tageditor", "MP3 ID3 1.0\n\nAutor: Dubnovitskiy Dmitry\nMRK group 3К9311\n\nE-mail: dimadimof81@gmail.com\nhttps://github.com/dmitryreaper");
     aboutMB.setIconPixmap(QPixmap(":/icon.svg"));
     aboutMB.setWindowIcon(QIcon(":/icon.svg"));
     aboutMB.exec();

@@ -16,7 +16,7 @@ public:
     explicit Form(QWidget *parent = 0);
     ~Form();
     Ui::Form *ui;
-     QList<QByteArray> listCodecs;
+    QList<QByteArray> listCodecs;
     QByteArray BA;
 
 private:
